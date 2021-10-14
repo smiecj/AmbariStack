@@ -1,0 +1,22 @@
+{
+  "name": "default",
+  "description": "default quick links configuration",
+  "configuration": {
+    "protocol": {
+      "type":"HTTP_ONLY"
+    },
+    "links": [
+      {
+        "name": "clickhouse",
+        "label": "Clickhouse",
+        "requires_user_name": "false",
+        "component_name": "Clickhouse",
+        "url":"%@://%@:%@/",
+        "port":{
+          "http_default_port": "9000",
+          "https_default_port": "9000"
+        }
+      }
+    ]
+  }
+}

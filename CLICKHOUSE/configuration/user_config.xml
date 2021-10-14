@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<!--
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<configuration>
+  <property>
+    <name>content</name>
+    <description>Clickhouse user configuration file</description>
+    <value>
+default_password = {{default_password}}
+zookeeper_nodes = {{zookeeper_nodes}}
+replica_nodes = {{replica_nodes}}
+repo_url = {{repo_url}}
+test = test(keep this line to avoid read line in shell cannot read last line)
+    </value>
+  <value-attributes>
+    <type>content</type>
+    <show-property-name>false</show-property-name>
+  </value-attributes>
+  <on-ambari-upgrade add="true"/>
+  </property>
+
+    <property>
+        <name>default_password</name>
+        <value>test_clickhouse_123</value>
+        <display-name>default password</display-name>
+        <description>clickhouse install default password</description>
+    </property>
+
+    <property>
+        <name>zookeeper_nodes</name>
+        <value>zk_node1:port,zk_node2:port,zk_node3:port</value>
+        <display-name>zookeeper nodes</display-name>
+        <description>zookeeper nodes</description>
+    </property>
+
+    <property>
+        <name>replica_nodes</name>
+        <value>replica_node1,replica_node2,replica_node3</value>
+        <display-name>replica nodes</display-name>
+        <description>replica nodes</description>
+    </property>
+</configuration>
