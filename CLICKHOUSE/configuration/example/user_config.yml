@@ -2,4 +2,5 @@ default_password = test_clickhouse_123
 zookeeper_nodes = zk_node1:2181,zk_node2:2181,zk_node3:2181
 replica_nodes = clickhouse_node1,clickhouse_node2,clickhouse_node3
 repo_url = repo_url
+monitor_port = 9363
 test = test(keep this line to avoid read line in shell cannot read last line)

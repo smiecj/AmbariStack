@@ -20,6 +20,7 @@ clickhouse_default_username="default"
 clickhouse_default_password_key="default_password"
 clickhouse_default_port="9000"
 repo_url_key="repo_url"
+monitor_port_key="monitor_port"
 
 cluster_name="my_cluster"
 
@@ -69,6 +70,7 @@ get_config() {
 update_config() {
     config_update_func_map["$zk_nodes_key"]=update_zookeeper_nodes_config
     config_update_func_map["$replica_nodes_key"]=update_replica_nodes_config
+    config_update_func_map["$monitor_port_key"]=update_monitor_port_config
 
     for key in ${!config_map[@]};do
         if [ -n "${config_update_func_map[${key}]:-}" ]; then
@@ -163,6 +165,12 @@ update_replica_nodes_config() {
 
     sed -i "s/<shard>shard_no<\/shard>/<shard>$current_node_no<\/shard>/g" $main_config_file
     sed -i "s/<replica>replica_no<\/replica>/<replica>$current_node_no<\/replica>/g" $main_config_file
+}
+
+## replace monitor port config
+update_monitor_port_config() {
+    monitor_port=$1
+    sed -i "s/{monitor_port}/$monitor_port/g" $main_config_file
 }
 
 install() {

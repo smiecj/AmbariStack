@@ -29,6 +29,7 @@ default_password = {{default_password}}
 zookeeper_nodes = {{zookeeper_nodes}}
 replica_nodes = {{replica_nodes}}
 repo_url = {{repo_url}}
+monitor_port = {{monitor_port}}
 test = test(keep this line to avoid read line in shell cannot read last line)
     </value>
   <value-attributes>
@@ -57,5 +58,12 @@ test = test(keep this line to avoid read line in shell cannot read last line)
         <value>replica_node1,replica_node2,replica_node3</value>
         <display-name>replica nodes</display-name>
         <description>replica nodes</description>
+    </property>
+
+    <property>
+        <name>monitor_port</name>
+        <value>9363</value>
+        <display-name>monitor port</display-name>
+        <description>monitor port</description>
     </property>
 </configuration>
