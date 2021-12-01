@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration supports_final="true">
+    <property>
+        <name>node_modules_path</name>
+        <value>/home/modules/node_modules</value>
+        <display-name>node modules install path</display-name>
+        <description>node modules install path</description>
+    </property>
+
+    <property>
+        <name>pre_install_node_modules</name>
+        <value>configurable-http-proxy
+yarn
+        </value>
+        <display-name>pre install node modules</display-name>
+        <description>pre install node modules, separate by line</description>
+    </property>
+</configuration>

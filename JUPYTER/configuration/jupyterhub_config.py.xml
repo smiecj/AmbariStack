@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<!--
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<configuration>
+
+  <property>
+    <name>content</name>
+    <description>Jupyter configuration file</description>
+    <value>
+# Configuration file for jupyterhub.
+
+c.JupyterHub.authenticator_class = '{{authenticator}}'
+
+## dummy config
+{% if authenticator == 'jupyterhub.auth.DummyAuthenticator' %}
+c.Authenticator.allowed_users = '{{allowed_users}}'
+c.DummyAuthenticator.password = '{{dummy_password}}'
+{% endif %}
+
+## ldap config
+{% if authenticator == 'ldapauthenticator.LDAPAuthenticator' %}
+c.LDAPAuthenticator.server_address = '{{ldap_server}}'
+c.LDAPAuthenticator.server_port = {{ldap_port}}
+c.LDAPAuthenticator.use_ssl = False
+
+c.LDAPAuthenticator.bind_user_dn = '{{ldap_bind_user_dn}}'
+c.LDAPAuthenticator.lookup_dn = True
+c.LDAPAuthenticator.user_search_base = '{{ldap_user_search_base}}'
+c.LDAPAuthenticator.lookup_dn_search_filter = '{{ldap_lookup_search_filter}}'
+c.LDAPAuthenticator.lookup_dn_user_dn_attribute = '{{ldap_lookup_attribute}}'
+
+c.LDAPAuthenticator.user_attribute = '{{ldap_user_attribute}}'
+c.LDAPAuthenticator.bind_dn_template = ['{{ldap_bind_dn_template}}']
+c.LDAPAuthenticator.lookup_dn_search_user = '{{ldap_lookup_user}}'
+c.LDAPAuthenticator.lookup_dn_search_password = '{{ldap_loopup_password}}'
+{% endif %}
+
+## ssl config
+{% if ssl_key_folder != '' %}
+c.JupyterHub.ssl_key = '{{ssl_key_folder}}'
+c.JupyterHub.ssl_cert = '{{ssl_pem_folder}}'
+{% endif %}
+
+## azure oauth2 config
+{% if authenticator == 'oauthenticator.azuread.AzureAdOAuthenticator' %}
+## oauth
+c.AzureAdOAuthenticator.tenant_id = '{{oauth_tenant_id}}'
+
+c.AzureAdOAuthenticator.oauth_callback_url = '{{oauth_server_address}}/hub/oauth_callback'
+c.AzureAdOAuthenticator.client_id = '{{oauth_client_id}}'
+c.AzureAdOAuthenticator.client_secret = '{{oauth_client_secret}}'
+
+c.Spawner.args = ['--NotebookApp.allow_origin=*']
+
+c.JupyterHub.spawner_class = 'sudospawner.SudoSpawner'
+c.Spawner.cmd = '{{miniconda_install_path}}/envs/jupyter_env/bin/sudospawner'
+
+{% endif %}
+
+c.JupyterHub.ip = '{{ip}}'
+c.JupyterHub.port = {{port}}
+c.JupyterHub.pid_file = '{{jupyterhub_pid_path}}/{{jupyterhub_pid_name}}'
+
+c.JupyterHub.hub_port = {{jupyterhub_inner_port}}
+
+## support ldap create new user
+from subprocess import check_call
+
+## ldap / oauth need create user
+{% if authenticator == 'ldapauthenticator.LDAPAuthenticator' or authenticator == 'oauthenticator.azuread.AzureAdOAuthenticator' %}
+def pre_spawn_hook(spawner):
+    username = spawner.user.name
+    try:
+        check_call(['sudo', 'useradd', '-ms', '/bin/bash', username])
+        check_call(['sudo', 'ln', '-s', '{{juputerhub_share_folder}}', '/home/'+username+'/share-code'])
+    except Exception as e:
+        print(f'{e}')
+c.Spawner.pre_spawn_hook = pre_spawn_hook
+{% endif %}
+
+import sys
+c.JupyterHub.services = [
+    {
+        'name': 'idle-culler',
+        'admin': True,
+        'command': [
+            sys.executable,
+            '-m', 'jupyterhub_idle_culler',
+            '--timeout={{jupyterhub_spawner_timeout}}'
+        ],
+    }
+]
+    </value>
+  <value-attributes>
+    <type>content</type>
+    <show-property-name>false</show-property-name>
+  </value-attributes>
+  <on-ambari-upgrade add="true"/>
+  </property>
+
+    <property>
+        <name>authenticator</name>
+        <value>jupyterhub.auth.PAMAuthenticator</value>
+        <display-name>authenticator</display-name>
+        <description>jupyter authenticator, normally use PAM, LDAP, Dummy or AzureOauth</description>
+        <value-attributes>
+            <type>value-list</type>
+            <entries>
+                <entry>
+                    <value>jupyterhub.auth.PAMAuthenticator</value>
+                    <label>PAM</label>
+                </entry>
+                <entry>
+                    <value>ldapauthenticator.LDAPAuthenticator</value>
+                    <label>LDAP</label>
+                </entry>
+                <entry>
+                    <value>jupyterhub.auth.DummyAuthenticator</value>
+                    <label>Dummy</label>
+                </entry>
+                <entry>
+                    <value>oauthenticator.azuread.AzureAdOAuthenticator</value>
+                    <label>AzureOauth</label>
+                </entry>
+            </entries>
+            <selection-cardinality>1</selection-cardinality>
+        </value-attributes>
+    </property>
+
+    <property>
+        <name>share_code_folder</name>
+        <value>/srv/jupyter/share-code</value>
+        <display-name>folder for jupyter share code</display-name>
+        <description>different account share code in this folder</description>
+    </property>
+
+    <property>
+        <name>dummy_password</name>
+        <value>jupyter@123</value>
+        <display-name>dummy authenticator default password</display-name>
+        <description>when use dummy authenticator, you must set login password, which is all user using it</description>
+    </property>
+
+    <property require-input="false">
+        <name>allowed_login_users</name>
+        <value></value>
+        <display-name>allow login user, split by comma</display-name>
+        <description>when use dummy authenticator, you can use this to limit users that allow to login. Default empty: allow all user</description>
+        <value-attributes>
+            <empty-value-valid>true</empty-value-valid>
+        </value-attributes>
+    </property>
+
+    <property>
+        <name>ldap_server</name>
+        <value>ldap_server</value>
+        <display-name>ldap server address</display-name>
+        <description>ldap server address</description>
+    </property>
+
+    <property>
+        <name>ldap_port</name>
+        <value>389</value>
+        <display-name>ldap port</display-name>
+        <description>ldap port</description>
+    </property>
+
+    <property>
+        <name>ldap_bind_user_dn</name>
+        <value>DC=com...</value>
+        <display-name>ldap bind user dn</display-name>
+        <description>ldap bind user dn</description>
+    </property>
+
+    <property>
+        <name>ldap_user_search_base</name>
+        <value>DC=com...</value>
+        <display-name>ldap user search base</display-name>
+        <description>ldap user search base</description>
+    </property>
+
+
+    <property>
+        <name>ldap_lookup_search_filter</name>
+        <value>(&amp;(objectclass=*)(sAMAccountName={login}))</value>
+        <display-name>ldap lookup filter</display-name>
+        <description>ldap lookup filter</description>
+    </property>
+
+
+    <property>
+        <name>ldap_lookup_attribute</name>
+        <value>sAMAccountName</value>
+        <display-name>ldap lookup attribute</display-name>
+        <description>ldap lookup attribute</description>
+    </property>
+
+
+    <property>
+        <name>ldap_user_attribute</name>
+        <value>sAMAccountName</value>
+        <display-name>ldap user attribute</display-name>
+        <description>ldap user attribute</description>
+    </property>
+
+
+    <property>
+        <name>ldap_bind_dn_template</name>
+        <value>cn={username},DC=...</value>
+        <display-name>ldap bind dn template</display-name>
+        <description>ldap bind dn template</description>
+    </property>
+
+    <property>
+        <name>ldap_lookup_user</name>
+        <value>username</value>
+        <display-name>ldap lookup user name</display-name>
+        <description>ldap lookup user name</description>
+    </property>
+
+    <property>
+        <name>ldap_loopup_password</name>
+        <value>password</value>
+        <display-name>ldap lookup password</display-name>
+        <description>ldap lookup password</description>
+    </property>
+
+    <property require-input="false">
+        <name>oauth_tenant_id</name>
+        <value></value>
+        <display-name>oauth tenant id</display-name>
+        <description>oauth tenant id</description>
+        <value-attributes>
+            <empty-value-valid>true</empty-value-valid>
+        </value-attributes>
+    </property>
+
+    <property require-input="false">
+        <name>oauth_server_address</name>
+        <value></value>
+        <display-name>oauth server address</display-name>
+        <description>oauth server address, example: https:inner_host:inner_port</description>
+        <value-attributes>
+            <empty-value-valid>true</empty-value-valid>
+        </value-attributes>
+    </property>
+
+    <property require-input="false">
+        <name>oauth_client_id</name>
+        <value></value>
+        <display-name>oauth client id</display-name>
+        <description>oauth client id</description>
+        <value-attributes>
+            <empty-value-valid>true</empty-value-valid>
+        </value-attributes>
+    </property>
+
+<!-- 当前：配置 require ？-->
+    <property require-input="false">
+        <name>oauth_client_secret</name>
+        <value></value>
+        <display-name>oauth client secret</display-name>
+        <description>oauth client secret</description>
+        <value-attributes>
+            <empty-value-valid>true</empty-value-valid>
+        </value-attributes>
+    </property>
+
+    <property require-input="false">
+        <name>ssl_key_folder</name>
+        <value></value>
+        <display-name>ssl key folder</display-name>
+        <description>ssl key folder</description>
+        <value-attributes>
+            <empty-value-valid>true</empty-value-valid>
+        </value-attributes>
+    </property>
+
+    <property require-input="false">
+        <name>ssl_pem_folder</name>
+        <value></value>
+        <display-name>ssl pem folder</display-name>
+        <description>ssl pem folder</description>
+        <value-attributes>
+            <empty-value-valid>true</empty-value-valid>
+        </value-attributes>
+    </property>
+
+    <property>
+        <name>jupyterhub_spawner_timeout</name>
+        <value>86400</value>
+        <display-name>jupyter notebook timeout in seconds</display-name>
+        <description>jupyter notebook timeout</description>
+    </property>
+</configuration>

@@ -5,7 +5,7 @@
 ### rely: user_config.yml which store custom configuration
 
 ## env prepare
-home=/opt/modules/clickhouse
+home=/home/modules/clickhouse
 main_config_file="main_config.xml"
 user_config_file="user_config.yml"
 clickhouse_config_path="/etc/clickhouse-server"
@@ -177,7 +177,7 @@ install() {
     ## install clickhouse
     repo_url=${config_map[${repo_url_key}]}
     clickhouse_default_password=${config_map[${clickhouse_default_password_key}]}
-    rpm_path="EMR_V1.0/clickhouse/rpm"
+    rpm_path="/clickhouse/rpm"
     yum -y install expect
 
     ### remove old package

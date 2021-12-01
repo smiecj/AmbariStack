@@ -1,0 +1,22 @@
+{
+  "name": "default",
+  "description": "default quick links configuration",
+  "configuration": {
+    "protocol": {
+      "type":"HTTP_ONLY"
+    },
+    "links": [
+      {
+        "name": "jupyterhub",
+        "label": "JuputerHub",
+        "requires_user_name": "false",
+        "component_name": "JupyterHub",
+        "url":"%@://%@:%@/",
+        "port":{
+          "http_default_port": "8000",
+          "https_default_port": "8000"
+        }
+      }
+    ]
+  }
+}

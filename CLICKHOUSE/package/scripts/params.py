@@ -15,9 +15,9 @@ stack_version_buildnum = default("/commandParams/version", None)
 repo_url = "http://repo_url"
 
 main_config_file_name = "main_config.xml"
-main_config_repo_url = repo_url + "/EMR_V1.0/clickhouse/etc/" + main_config_file_name
+main_config_repo_url = repo_url + "/clickhouse/etc/" + main_config_file_name
 
-user_config_file_path = "/opt/modules/clickhouse"
+user_config_file_path = "/home/modules/clickhouse"
 user_config_file_name = "user_config.yml"
 user_config_content = config['configurations']['user_config']['content']
 main_script_name = "clickhouse.sh"

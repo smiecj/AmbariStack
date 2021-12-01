@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration supports_final="true">
+    <!--Configuration options for user authentication into the web application-->
+    <property>
+        <name>bind_ip</name>
+        <value>0.0.0.0</value>
+        <display-name>bind ip</display-name>
+        <description>jupyter hub bind ip</description>
+    </property>
+
+    <property>
+        <name>bind_port</name>
+        <value>8000</value>
+        <display-name>bind port</display-name>
+        <description>jupyter bind port</description>
+    </property>
+</configuration>

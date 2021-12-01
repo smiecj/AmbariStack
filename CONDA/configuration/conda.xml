@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration supports_final="true">
+    <property>
+        <name>install_path</name>
+        <value>/home/modules/miniconda2</value>
+        <display-name>conda install path</display-name>
+        <description>conda install path</description>
+    </property>
+</configuration>
