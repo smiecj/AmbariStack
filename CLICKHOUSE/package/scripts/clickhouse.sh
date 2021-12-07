@@ -21,6 +21,8 @@ clickhouse_default_password_key="default_password"
 clickhouse_default_port="9000"
 repo_url_key="repo_url"
 monitor_port_key="monitor_port"
+data_path_key="data_path_key"
+tmp_path_key="tmp_path_key"
 
 cluster_name="my_cluster"
 
@@ -71,6 +73,8 @@ update_config() {
     config_update_func_map["$zk_nodes_key"]=update_zookeeper_nodes_config
     config_update_func_map["$replica_nodes_key"]=update_replica_nodes_config
     config_update_func_map["$monitor_port_key"]=update_monitor_port_config
+    config_update_func_map["$data_path_key"]=update_data_path_config
+    config_update_func_map["$tmp_path_key"]=update_tmp_path_config
 
     for key in ${!config_map[@]};do
         if [ -n "${config_update_func_map[${key}]:-}" ]; then
@@ -171,6 +175,18 @@ update_replica_nodes_config() {
 update_monitor_port_config() {
     monitor_port=$1
     sed -i "s/{monitor_port}/$monitor_port/g" $main_config_file
+}
+
+## replace data path config
+update_data_path_config() {
+    data_path=$1
+    sed -i "s/{data_path}/$data_path/g" $main_config_file
+}
+
+## replace tmp path config
+update_tmp_path_config() {
+    tmp_path=$1
+    sed -i "s/{tmp_path}/$tmp_path/g" $main_config_file
 }
 
 install() {

@@ -332,10 +332,10 @@
     <compiled_expression_cache_size>1073741824</compiled_expression_cache_size>
 
     <!-- Path to data directory, with trailing slash. -->
-    <path>/opt/clickhouse/data</path>
+    <path>{data_path}</path>
 
     <!-- Path to temporary data for processing hard queries. -->
-    <tmp_path>/opt/clickhouse/tmp/</tmp_path>
+    <tmp_path>{tmp_path}</tmp_path>
 
     <!-- Policy from the <storage_configuration> for the temporary files.
          If not set <tmp_path> is used, otherwise <tmp_path> is ignored.

@@ -27,5 +27,7 @@ default_password = config['configurations']['user_config']['default_password']
 zookeeper_nodes = config['configurations']['user_config']['zookeeper_nodes']
 replica_nodes = config['configurations']['user_config']['replica_nodes']
 monitor_port = config['configurations']['user_config']['monitor_port']
+data_path = config['configurations']['user_config']['data_path']
+tmp_path = config['configurations']['user_config']['tmp_path']
 
 clickhouse_pid_path = "/run/clickhouse-server/clickhouse-server.pid"

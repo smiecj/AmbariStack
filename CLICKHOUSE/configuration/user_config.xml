@@ -25,6 +25,8 @@
     <name>content</name>
     <description>Clickhouse user configuration file</description>
     <value>
+data_path = {{data_path}}
+tmp_path = {{tmp_path}}
 default_password = {{default_password}}
 zookeeper_nodes = {{zookeeper_nodes}}
 replica_nodes = {{replica_nodes}}
@@ -38,6 +40,20 @@ test = test(keep this line to avoid read line in shell cannot read last line)
   </value-attributes>
   <on-ambari-upgrade add="true"/>
   </property>
+
+    <property>
+      <name>data_path</name>
+      <value>/opt/clickhouse/data</value>
+      <display-name>data path</display-name>
+      <description>clickhouse data path</description>
+    </property>
+
+    <property>
+      <name>tmp_path</name>
+      <value>/opt/clickhouse/tmp</value>
+      <display-name>tmp path</display-name>
+      <description>clickhouse tmp path</description>
+    </property>
 
     <property>
         <name>default_password</name>
