@@ -30,8 +30,12 @@ tmp_path = {{tmp_path}}
 default_password = {{default_password}}
 zookeeper_nodes = {{zookeeper_nodes}}
 replica_nodes = {{replica_nodes}}
+default_database = {{default_database}}
 repo_url = {{repo_url}}
 monitor_port = {{monitor_port}}
+normal_user = {{normal_user}}
+normal_user_password = {{normal_user_password}}
+normal_user_allow_databases = {{normal_user_allow_databases}}
 test = test(keep this line to avoid read line in shell cannot read last line)
     </value>
   <value-attributes>
@@ -81,5 +85,33 @@ test = test(keep this line to avoid read line in shell cannot read last line)
         <value>9363</value>
         <display-name>monitor port</display-name>
         <description>monitor port</description>
+    </property>
+
+    <property>
+      <name>default_database</name>
+      <value>busi_db</value>
+      <display-name>default database prefix</display-name>
+      <description>e.g. 3 replica database name will be: name01, name02, name03</description>
+    </property>
+
+    <property>
+      <name>normal_user</name>
+      <value>warehouse</value>
+      <display-name>normal user</display-name>
+      <description>normal user usually allow to execute ETL task</description>
+    </property>
+
+    <property>
+      <name>normal_user_password</name>
+      <value>warehouse_pwd</value>
+      <display-name>normal user password</display-name>
+      <description>normal user password</description>
+    </property>
+
+    <property>
+      <name>normal_user_allow_databases</name>
+      <value>busi_db01,busi_db02,busi_db03</value>
+      <display-name>normal user allow access databases</display-name>
+      <description>normal user allow access databases, separate by comma</description>
     </property>
 </configuration>

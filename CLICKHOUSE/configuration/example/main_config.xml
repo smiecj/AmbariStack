@@ -738,8 +738,8 @@
          See https://clickhouse.tech/docs/en/engines/table-engines/mergetree-family/replication/#creating-replicated-tables
       -->
     <macros>
-        <shard>03</shard>
-        <replica>03</replica>
+        <shard>shard_no</shard>
+        <replica>replica_no</replica>
     </macros>
 
 

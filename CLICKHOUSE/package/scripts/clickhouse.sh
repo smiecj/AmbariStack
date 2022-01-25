@@ -8,6 +8,7 @@
 home=/home/modules/clickhouse
 main_config_file="main_config.xml"
 user_config_file="user_config.yml"
+users_config_file="users_config.xml"
 clickhouse_config_path="/etc/clickhouse-server"
 clickhouse_data_home_path="/opt/clickhouse"
 clickhouse_pid_path="/var/run/clickhouse-server"
@@ -19,10 +20,17 @@ replica_nodes_key="replica_nodes"
 clickhouse_default_username="default"
 clickhouse_default_password_key="default_password"
 clickhouse_default_port="9000"
+clickhouse_default_database="db"
+clickhouse_default_database_key="default_database"
+
 repo_url_key="repo_url"
 monitor_port_key="monitor_port"
 data_path_key="data_path_key"
 tmp_path_key="tmp_path_key"
+
+normal_user_key="normal_user"
+normal_user_password_key="normal_user_password"
+normal_user_allow_databases_key="normal_user_allow_databases"
 
 cluster_name="my_cluster"
 
@@ -76,15 +84,27 @@ update_config() {
     config_update_func_map["$data_path_key"]=update_data_path_config
     config_update_func_map["$tmp_path_key"]=update_tmp_path_config
 
-    for key in ${!config_map[@]};do
-        if [ -n "${config_update_func_map[${key}]:-}" ]; then
-            ${config_update_func_map[${key}]} ${config_map[${key}]}
+    config_update_func_map["$clickhouse_default_database_key"]=update_default_database
+
+    config_update_func_map["$normal_user_key"]=update_normal_user
+    config_update_func_map["$normal_user_password_key"]=update_normal_user_password
+    config_update_func_map["$normal_user_allow_databases_key"]=update_normal_user_allow_databases
+
+    ### set config with order
+    config_key_arr=("$zk_nodes_key" "$clickhouse_default_database_key" "$replica_nodes_key" "$monitor_port_key" \
+        "$data_path_key" "$tmp_path_key" "$normal_user_key" "$normal_user_password_key" "$normal_user_allow_databases_key")
+    for config_key in ${config_key_arr[@]}
+    do
+        if [ -n "${config_update_func_map[${config_key}]:-}" ]; then
+            ${config_update_func_map[${config_key}]} ${config_map[${config_key}]}
         fi
     done
 
     ### move current config to clickhouse server config folder
+    #### the origin config file usually come from file server (refer clickhouse_base.py)
     mkdir -p $clickhouse_config_path
     cp -f $main_config_file $clickhouse_config_path/config.xml
+    cp -f $users_config_file $clickhouse_config_path/users.xml
 }
 
 ## replace zookeeper nodes config
@@ -148,11 +168,14 @@ update_replica_nodes_config() {
         fi
         replica_node_arr=(${node_list[$i]} $next_node)
 
+        node_num_str=$(printf "%02d" $i)
+        database_num="$default_database$node_num_str"
         for replica_node in ${replica_node_arr[@]}
         do
             node_replace_str="$node_replace_str\n$space_4$space_4$space_4<shard>"
             node_replace_str="$node_replace_str\n$space_4$space_4$space_4$space_4$allow_internal_replication_str"
             node_replace_str="$node_replace_str\n$space_4$space_4$space_4$space_4<replica>"
+            node_replace_str="$node_replace_str\n$space_4$space_4$space_4$space_4$space_4<default_database>$database_num</default_database>"
             node_replace_str="$node_replace_str\n$space_4$space_4$space_4$space_4$space_4<host>$replica_node</host>"
             node_replace_str="$node_replace_str\n$space_4$space_4$space_4$space_4$space_4<port>$clickhouse_default_port</port>"
             node_replace_str="$node_replace_str\n$space_4$space_4$space_4$space_4$space_4<user>$clickhouse_username</user>"
@@ -167,6 +190,7 @@ update_replica_nodes_config() {
     sed -e "s/<cluster_nshards_2replicas>.*<\/cluster_nshards_2replicas>/$node_replace_str/g" $main_config_file > test_file \
         && mv -f test_file $main_config_file && sed -i 's/\r//' $main_config_file
 
+    #### todo: support set more replica env (in one node, maybe more than 1 replica)
     sed -i "s/<shard>shard_no<\/shard>/<shard>$current_node_no<\/shard>/g" $main_config_file
     sed -i "s/<replica>replica_no<\/replica>/<replica>$current_node_no<\/replica>/g" $main_config_file
 }
@@ -187,6 +211,55 @@ update_data_path_config() {
 update_tmp_path_config() {
     tmp_path=$1
     sed -i "s/{tmp_path}/$tmp_path/g" $main_config_file
+}
+
+
+## set default database
+update_default_database() {
+    if [ -n "$1" ]; then
+        default_database=$1
+    fi
+}
+
+## set normal user
+update_normal_user() {
+    if [ -n "$1" ]; then
+        normal_user=$1
+    fi
+}
+
+## set normal user password
+update_normal_user_password() {
+    if [ -n "$1" ]; then
+        normal_user_password=$1
+    fi
+}
+
+## set normal user allow database and set config file
+update_normal_user_allow_databases() {
+    if [ -n "$1" ]; then
+        normal_user_allow_databases=$1
+    fi
+    space_4="    "
+
+    normal_user_replace_str="<$normal_user>"
+    normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4<password>$normal_user_password</password>"
+    normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4<profile>default</profile>"
+    normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4<quota>default</quota>"
+    normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4<networks>"
+    normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4$space_4<ip>::/0</ip>"
+    normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4</networks>"
+    normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4<allow_databases>"
+    allow_database_list=($(echo $normal_user_allow_databases | tr "," "\n" | sort | uniq))
+    for allow_database in ${allow_database_list[@]}
+    do
+        normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4$space_4<database>$allow_database</database>"
+    done
+    normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4</allow_databases>"
+    normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4</$normal_user>"
+    normal_user_replace_str=$(echo "$normal_user_replace_str" | sed 's/<\//<\\\//g')
+    normal_user_replace_str=$(echo "$normal_user_replace_str" | sed 's/\/0/\\\/0/g')
+    sed -ie "s/<normal_user><\/normal_user>/$normal_user_replace_str/g" $users_config_file
 }
 
 install() {
