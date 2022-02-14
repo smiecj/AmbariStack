@@ -256,6 +256,7 @@ update_normal_user_allow_databases() {
         normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4$space_4<database>$allow_database</database>"
     done
     normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4</allow_databases>"
+    normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4<max_partitions_per_insert_block>1000</max_partitions_per_insert_block>"
     normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4</$normal_user>"
     normal_user_replace_str=$(echo "$normal_user_replace_str" | sed 's/<\//<\\\//g')
     normal_user_replace_str=$(echo "$normal_user_replace_str" | sed 's/\/0/\\\/0/g')
