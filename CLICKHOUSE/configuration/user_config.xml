@@ -98,20 +98,20 @@ test = test(keep this line to avoid read line in shell cannot read last line)
       <name>normal_user</name>
       <value>warehouse</value>
       <display-name>normal user</display-name>
-      <description>normal user usually allow to execute ETL task</description>
+      <description>normal user usually allow to execute ETL task, different user seperate by ';'</description>
     </property>
 
     <property>
       <name>normal_user_password</name>
       <value>warehouse_pwd</value>
       <display-name>normal user password</display-name>
-      <description>normal user password</description>
+      <description>normal user password, different user seperate by ';'</description>
     </property>
 
     <property>
       <name>normal_user_allow_databases</name>
       <value>busi_db01,busi_db02,busi_db03</value>
       <display-name>normal user allow access databases</display-name>
-      <description>normal user allow access databases, separate by comma</description>
+      <description>normal user allow access databases, separate by comma, different user seperate by ';'</description>
     </property>
 </configuration>

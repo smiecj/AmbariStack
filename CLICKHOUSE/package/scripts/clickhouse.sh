@@ -242,21 +242,39 @@ update_normal_user_allow_databases() {
     fi
     space_4="    "
 
-    normal_user_replace_str="<$normal_user>"
-    normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4<password>$normal_user_password</password>"
-    normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4<profile>default</profile>"
-    normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4<quota>default</quota>"
-    normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4<networks>"
-    normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4$space_4<ip>::/0</ip>"
-    normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4</networks>"
-    normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4<allow_databases>"
-    allow_database_list=($(echo $normal_user_allow_databases | tr "," "\n" | sort | uniq))
-    for allow_database in ${allow_database_list[@]}
+    # split normal user and password
+    normal_user_arr=${normal_user}
+    normal_user_password_arr=${normal_user_password}
+    normal_user_allow_databases_arr=${normal_user_allow_databases}
+    if [[ ${normal_user} == *";"* ]]; then
+        normal_user_arr=($(echo ${normal_user} | tr ";" "\n"))
+        normal_user_password_arr=($(echo ${normal_user_password} | tr ";" "\n"))
+        normal_user_allow_databases_arr=($(echo ${normal_user_allow_databases} | tr ";" "\n"))
+    fi
+
+    normal_user_replace_str=""
+    for index in ${!normal_user_arr[@]}
     do
-        normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4$space_4<database>$allow_database</database>"
+        local normal_user=${normal_user_arr[${index}]}
+        local normal_user_password=${normal_user_password_arr[${index}]}
+        local normal_user_allow_databases=${normal_user_allow_databases_arr[${index}]}
+
+        normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4<$normal_user>"
+        normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4<password>$normal_user_password</password>"
+        normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4<profile>default</profile>"
+        normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4<quota>default</quota>"
+        normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4<networks>"
+        normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4$space_4<ip>::/0</ip>"
+        normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4</networks>"
+        normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4<allow_databases>"
+        allow_database_list=($(echo $normal_user_allow_databases | tr "," "\n" | sort | uniq))
+        for allow_database in ${allow_database_list[@]}
+        do
+            normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4$space_4<database>$allow_database</database>"
+        done
+        normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4</allow_databases>"
+        normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4</$normal_user>"
     done
-    normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4$space_4</allow_databases>"
-    normal_user_replace_str="$normal_user_replace_str\n$space_4$space_4</$normal_user>"
     normal_user_replace_str=$(echo "$normal_user_replace_str" | sed 's/<\//<\\\//g')
     normal_user_replace_str=$(echo "$normal_user_replace_str" | sed 's/\/0/\\\/0/g')
     sed -ie "s/<normal_user><\/normal_user>/$normal_user_replace_str/g" $users_config_file
