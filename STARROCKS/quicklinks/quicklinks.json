@@ -1,0 +1,26 @@
+{
+  "name": "default",
+  "description": "default quick links configuration",
+  "configuration": {
+    "protocol": {
+      "type": "http"
+    },
+    "links": [
+      {
+        "name": "starrocks_webui",
+        "label": "STARROCKS WebUI",
+        "component_name": "STARROCKS_FE",
+        "requires_user_name": "false",
+        "url": "%@://%@:%@",
+        "port": {
+          "http_property": "port",
+          "http_default_port": "8030",
+          "https_property": "port",
+          "https_default_port": "8030",
+          "regex": "^(\\d+)$",
+          "site": "starrocks.fe.conf"
+        }
+      }
+    ]
+  }
+}

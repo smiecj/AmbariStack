@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+
+  <property>
+    <name>content</name>
+    <description>starrocks fe configuration file</description>
+    <value>
+LOG_DIR = ${STARROCKS_HOME}/log
+
+DATE = "$(date +%Y%m%d-%H%M%S)"
+JAVA_OPTS="-Dlog4j2.formatMsgNoLookups=true -Xmx8192m -XX:+UseMembar -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=7 -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSClassUnloadingEnabled -XX:-CMSParallelRemarkEnabled -XX:CMSInitiatingOccupancyFraction=80 -XX:SoftRefLRUPolicyMSPerMB=0 -Xloggc:${LOG_DIR}/fe.gc.log.$DATE -XX:+PrintConcurrentLocks"
+
+# For jdk 9+, this JAVA_OPTS will be used as default JVM options
+JAVA_OPTS_FOR_JDK_9="-Dlog4j2.formatMsgNoLookups=true -Xmx8192m -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=7 -XX:+CMSClassUnloadingEnabled -XX:-CMSParallelRemarkEnabled -XX:CMSInitiatingOccupancyFraction=80 -XX:SoftRefLRUPolicyMSPerMB=0 -Xlog:gc*:${LOG_DIR}/fe.gc.log.$DATE:time"
+
+# DEBUG, INFO, WARN, ERROR, FATAL
+sys_log_level = INFO
+
+meta_dir = {{starrocks_fe_meta_path}}
+
+http_port = {{starrocks_fe_http_port}}
+rpc_port = {{starrocks_fe_rpc_port}}
+query_port = {{starrocks_fe_query_port}}
+edit_log_port = {{starrocks_fe_log_port}}
+mysql_service_nio_enabled = true
+
+# Advanced configurations
+# log_roll_size_mb = 1024
+# sys_log_dir = ${STARROCKS_HOME}/log
+# sys_log_roll_num = 10
+# sys_log_verbose_modules =
+# audit_log_dir = ${STARROCKS_HOME}/log
+# audit_log_modules = slow_query, query
+# audit_log_roll_num = 10
+# meta_delay_toleration_second = 10
+# qe_max_connection = 1024
+# max_conn_per_user = 100
+# qe_query_timeout_second = 300
+# qe_slow_log_ms = 5000
+    </value>
+  <value-attributes>
+    <type>content</type>
+    <show-property-name>false</show-property-name>
+  </value-attributes>
+  <on-ambari-upgrade add="true"/>
+  </property>
+
+  <property>
+      <name>starrocks_fe_http_port</name>
+      <value>8030</value>
+      <display-name>fe http port</display-name>
+      <description>The port that is used by the FE to communicate with an HTTP protocol</description>
+  </property>
+
+  <property>
+      <name>starrocks_fe_rpc_port</name>
+      <value>9020</value>
+      <display-name>fe rpc port</display-name>
+      <description>The port that is used by the FE to communicate with a thrift server</description>
+  </property>
+
+  <property>
+      <name>starrocks_fe_query_port</name>
+      <value>9030</value>
+      <display-name>fe query port</display-name>
+      <description>The port that is used by the FE to communicate with a MySQL protocol</description>
+  </property>
+
+  <property>
+      <name>starrocks_fe_log_port</name>
+      <value>9010</value>
+      <display-name>fe log port</display-name>
+      <description>Thrift server port of the Compute Node. The port is used to receive requests from FE</description>
+  </property>
+
+  <property>
+      <name>starrocks_fe_meta_path</name>
+      <value>/opt/starrocks/meta</value>
+      <display-name>fe meta path</display-name>
+      <description>meta data will be saved here</description>
+  </property>
+
+</configuration>

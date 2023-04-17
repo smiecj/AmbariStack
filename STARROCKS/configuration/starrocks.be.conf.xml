@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+
+  <property>
+    <name>content</name>
+    <description>starrocks be configuration file</description>
+    <value>
+sys_log_level = {{be_log_level}}
+
+be_port = {{starrocks_be_port}}
+webserver_port = {{starrocks_be_webserver_port}}
+heartbeat_service_port = {{starrocks_be_heartbeat_port}}
+brpc_port = {{starrocks_be_brpc_port}}
+
+storage_root_path = {{starrocks_be_storage_path}}
+    </value>
+  <value-attributes>
+    <type>content</type>
+    <show-property-name>false</show-property-name>
+  </value-attributes>
+  <on-ambari-upgrade add="true"/>
+  </property>
+
+  <property>
+      <name>starrocks_be_port</name>
+      <value>9060</value>
+      <display-name>be port</display-name>
+      <description>The port that is used by the BE to communicate with an FE </description>
+  </property>
+
+  <property>
+      <name>starrocks_be_webserver_port</name>
+      <value>8040</value>
+      <display-name>be webserver port</display-name>
+      <description>be webserver port</description>
+  </property>
+
+  <property>
+      <name>starrocks_be_heartbeat_port</name>
+      <value>9050</value>
+      <display-name>be heartbeat port</display-name>
+      <description>Thrift server port of the Compute Node. The port is used to receive requests from FE</description>
+  </property>
+
+  <property>
+      <name>starrocks_be_brpc_port</name>
+      <value>8060</value>
+      <display-name>be brpc port</display-name>
+      <description>RPC port between BE and the Compute Node</description>
+  </property>
+
+
+  <property>
+      <name>starrocks_be_storage_path</name>
+      <value>/opt/starrocks/data</value>
+      <display-name>be storage path</display-name>
+      <description>indicates the directory for the BE to store the storage files</description>
+  </property>
+
+</configuration>
