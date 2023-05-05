@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+
+  <property>
+    <name>content</name>
+    <description>starrocks broker configuration file</description>
+    <value>
+broker_ipc_port={{starrocks_broker_ipc_port}}
+
+client_expire_seconds=300
+    </value>
+  <value-attributes>
+    <type>content</type>
+    <show-property-name>false</show-property-name>
+  </value-attributes>
+  <on-ambari-upgrade add="true"/>
+  </property>
+
+  <property>
+      <name>starrocks_broker_ipc_port</name>
+      <value>8000</value>
+      <display-name>broker port</display-name>
+      <description>The HDFS thrift RPC port</description>
+  </property>
+
+</configuration>

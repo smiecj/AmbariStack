@@ -14,14 +14,20 @@ starrocks_module_home = "/opt/modules/starrocks"
 starrocks_pkg_home = starrocks_module_home + "/" + starrocks_pkg_folder
 starrocks_fe_home = starrocks_pkg_home + "/fe"
 starrocks_be_home = starrocks_pkg_home + "/be"
+starrocks_broker_home = starrocks_pkg_home + "/apache_hdfs_broker"
 starrocks_fe_pid = starrocks_fe_home + "/bin/fe.pid"
 starrocks_be_pid = starrocks_be_home + "/bin/be.pid"
+starrocks_broker_pid = starrocks_broker_home + "/bin/apache_hdfs_broker.pid"
 starrocks_fe_conf = starrocks_fe_home + "/conf/fe.conf"
+starrocks_be_conf_home = starrocks_be_home + "/conf"
 starrocks_be_conf = starrocks_be_home + "/conf/be.conf"
+starrocks_broker_conf_home = starrocks_broker_home = "/conf"
+starrocks_broker_conf = starrocks_broker_home + "/conf/apache_hdfs_broker.conf"
 
 # load config
 fe_config_properties = config['configurations']['starrocks.fe.conf']
 be_config_properties = config['configurations']['starrocks.be.conf']
+broker_config_properties = config['configurations']['starrocks.broker.conf']
 
 ## config to replace
 starrocks_fe_content = fe_config_properties['content']
@@ -37,6 +43,9 @@ starrocks_be_webserver_port = be_config_properties['starrocks_be_webserver_port'
 starrocks_be_heartbeat_port = be_config_properties['starrocks_be_heartbeat_port']
 starrocks_be_brpc_port = be_config_properties['starrocks_be_brpc_port']
 starrocks_be_storage_path = be_config_properties['starrocks_be_storage_path']
+
+starrocks_broker_content = broker_config_properties['content']
+starrocks_broker_ipc_port = broker_config_properties['starrocks_broker_ipc_port']
 
 starrocks_config_home = '/etc/starrocks'
 starrocks_fe_config_directory = '/etc/starrocks/fe'

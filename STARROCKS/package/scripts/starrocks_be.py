@@ -37,7 +37,6 @@ class Backend(Script):
 
     def status(self, env):
         import params
-        print("[test] to print all configs: {}".format(params.config))
         Execute('sudo chmod 644 {} || true'.format(params.starrocks_be_pid))
         check_process_status(params.starrocks_be_pid)
 
@@ -49,6 +48,8 @@ class Backend(Script):
             content = InlineTemplate(params.starrocks_be_content),
             owner = "root"
         )
+
+        Execute(format('sudo cp -f /etc/hadoop/conf/hdfs-site.xml {starrocks_be_conf_home}'))
 
 if __name__ == '__main__':
     Backend().execute()

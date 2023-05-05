@@ -54,7 +54,6 @@ class Frontend(Script):
 
     def status(self, env):
         import params
-        print("[test] to print all configs: {}".format(params.config))
         Execute('sudo chmod 644 {} || true'.format(params.starrocks_fe_pid))
         check_process_status(params.starrocks_fe_pid)
 

@@ -57,9 +57,23 @@ StarRocks is a next-gen sub-second MPP database for full analytics scenarios, in
         </component>
       </components>
 
+        <component>
+          <name>STARROCKS_BROKER</name>
+          <displayName>starrocks broker</displayName>
+          <category>SLAVE</category>
+          <cardinality>1+</cardinality>
+          <versionAdvertised>true</versionAdvertised>
+          <commandScript>
+            <script>scripts/starrocks_broker.py</script>
+            <scriptType>PYTHON</scriptType>
+          </commandScript>
+        </component>
+      </components>
+
       <configuration-dependencies>
         <config-type>starrocks.be.conf</config-type>
         <config-type>starrocks.fe.conf</config-type>
+        <config-type>starrocks.broker.conf</config-type>
       </configuration-dependencies>
 
     </service>

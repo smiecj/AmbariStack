@@ -7,9 +7,11 @@ export JDK_HOME=/usr/java/jdk-17.0.6+10 # java
 
 快速安装：参考项目 [shell-tools](https://github.com/smiecj/shell-tools) 执行 make java-new
 
-# 选择 fe、be 节点
+# 选择 fe、be、broker 节点
 
-至少3节点起
+fe、be 都是至少3节点起
+
+broker 看实际需要，默认一节点起
 
 # 配置
 
@@ -56,6 +58,19 @@ ALTER SYSTEM ADD BACKEND "be节点3:9050";
 ```
 
 重启所有节点be，确认 /opt/modules/starrocks/StarRocks-2.5.3/be/log/be.log 显示正常，或者到 fe 页面查看 backend 状态
+
+## 添加 broker 节点
+
+```
+mysql -h127.0.0.1 -P9030 -uroot
+
+# 添加 broker
+ALTER SYSTEM ADD BROKER broker1 "broker节点1:8000";
+```
+
+## 启动 backend、broker 节点
+
+直接在ambari界面启动即可
 
 # 用户管理
 
